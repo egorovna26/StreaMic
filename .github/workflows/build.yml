@@ -18,8 +18,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'liberica'
-          java-package: 'jdk+fx'
+          distribution: 'oracle'
+          java-package: 'jdk'
           architecture: 'x64'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
