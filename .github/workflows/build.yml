@@ -25,7 +25,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-disabled: true
-          add-job-summary: 'always'
+          build-scan-publish: true
       - name: Build with Gradle
         run: |
           java -version
