@@ -1,0 +1,32 @@
+name: Development build
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'liberica'
+          java-package: 'jdk+fx'
+          architecture: 'x64'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: |
+          java -version
+          chmod +x ./gradlew
+          ./gradlew -version
+          ./gradlew clean
+          ./gradlew build
