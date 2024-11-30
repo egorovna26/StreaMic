@@ -25,13 +25,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-disabled: true
+          add-job-summary: 'always'
       - name: Build with Gradle
         run: |
           java -version
           chmod +x ./gradlew
           ./gradlew -version
           ./gradlew clean
-          ./gradlew build
+          ./gradlew build --scan
       - name: Set up variables
         id: vars
         run: |
