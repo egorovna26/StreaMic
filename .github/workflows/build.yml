@@ -26,13 +26,15 @@ jobs:
         with:
           cache-disabled: true
           build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
       - name: Build with Gradle
         run: |
           java -version
           chmod +x ./gradlew
           ./gradlew -version
           ./gradlew clean
-          ./gradlew build --scan
+          ./gradlew build
       - name: Set up variables
         id: vars
         run: |

@@ -2,10 +2,3 @@
 plugins {
     alias(libs.plugins.android.application) apply false
 }
-
-develocity {
-    buildScan {
-        termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
-        termsOfUseAgree = "yes"
-    }
-}
