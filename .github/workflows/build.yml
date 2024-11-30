@@ -32,7 +32,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew -version
           ./gradlew clean
-          echo "yes" | ./gradlew build --scan
+          ./gradlew build --scan
       - name: Set up variables
         id: vars
         run: |
