@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">StreaMic</string>
     <string name="notification_channel_name">Server</string>
+    <string name="post_notifications_title">Post Notifications</string>
+    <string name="post_notifications_description">Allows an app to post notifications</string>
+    <string name="record_audio_title">Record Audio</string>
+    <string name="record_audio_description">Allows an application to record audio</string>
+    <string name="allow_permission">Allow Permission</string>
 </resources>

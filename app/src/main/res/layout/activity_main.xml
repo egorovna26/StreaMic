@@ -14,18 +14,77 @@
         android:paddingHorizontal="15dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/post_notifications_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentPadding="15dp">
 
-            <TextView
-                android:id="@+id/device"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/info" />
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:text="@string/post_notifications_title"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/notifications" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/post_notifications_description" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/allow_post_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/allow_permission" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/record_audio_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:contentPadding="15dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:text="@string/record_audio_title"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/mic" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/record_audio_description" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/allow_record_audio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/allow_permission" />
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
