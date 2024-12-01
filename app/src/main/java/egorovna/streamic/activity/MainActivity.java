@@ -9,7 +9,6 @@ import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -31,19 +30,13 @@ public class MainActivity extends AppCompatActivity {
         allowPostNotifications = findViewById(R.id.allow_post_notifications);
         allowRecordAudio = findViewById(R.id.allow_record_audio);
         checkPermissions();
-        allowPostNotifications.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
-            @Override
-            public void onClick(View v) {
+        allowPostNotifications.setOnClickListener(v -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
             }
         });
-        allowRecordAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-            }
-        });
+        allowRecordAudio.setOnClickListener(v ->
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1));
     }
 
     @Override
