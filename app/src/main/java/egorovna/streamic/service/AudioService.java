@@ -7,8 +7,15 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AudioService extends Service {
     private final LocalBinder localBinder = new LocalBinder();
+
+    private boolean active = false;
 
     @Nullable
     @Override

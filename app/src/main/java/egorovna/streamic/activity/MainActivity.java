@@ -30,7 +30,11 @@ import java.util.Enumeration;
 
 import egorovna.streamic.R;
 import egorovna.streamic.service.AudioService;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MainActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection;
     private AudioService audioService;
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 AudioService.LocalBinder localBinder = (AudioService.LocalBinder) service;
                 audioService = localBinder.getService();
                 serviceBound = true;
+                checkPermissions();
             }
 
             @Override
@@ -156,8 +161,13 @@ public class MainActivity extends AppCompatActivity {
             recordAudioCard.setVisibility(VISIBLE);
         }
         if (postNotifications && recordAudio) {
-            serviceStart.setVisibility(VISIBLE);
-            serviceStatus.setVisibility(VISIBLE);
+            if (serviceBound && audioService.isActive()) {
+                serviceStart.setVisibility(GONE);
+                serviceStatus.setVisibility(VISIBLE);
+            } else {
+                serviceStart.setVisibility(VISIBLE);
+                serviceStatus.setVisibility(GONE);
+            }
         } else {
             serviceStart.setVisibility(GONE);
             serviceStatus.setVisibility(GONE);
