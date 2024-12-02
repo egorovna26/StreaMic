@@ -6,15 +6,17 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.icu.text.MessageFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,6 +38,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MainActivity extends AppCompatActivity {
+    private BroadcastReceiver broadcastReceiver;
     private ServiceConnection serviceConnection;
     private AudioService audioService;
     private boolean serviceBound = false;
@@ -54,18 +57,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                checkPermissions();
+            }
+        };
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 AudioService.LocalBinder localBinder = (AudioService.LocalBinder) service;
-                audioService = localBinder.getService();
-                serviceBound = true;
+                setAudioService(localBinder.getService());
+                setServiceBound(true);
                 checkPermissions();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                serviceBound = false;
+                setServiceBound(false);
             }
         };
         postNotificationsCard = findViewById(R.id.post_notifications_card);
@@ -80,20 +89,13 @@ public class MainActivity extends AppCompatActivity {
         allowRecordAudio.setOnClickListener(v ->
                 requestPermissions(new String[]{RECORD_AUDIO}, 1));
         serviceStart = findViewById(R.id.service_start);
-        serviceStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        serviceStart.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AudioService.class);
+            startForegroundService(intent);
         });
         serviceStatus = findViewById(R.id.service_status);
         serviceStop = findViewById(R.id.service_stop);
-        serviceStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        serviceStop.setOnClickListener(v -> audioService.stopService());
         deviceName = findViewById(R.id.device_name);
         deviceName.setText(MessageFormat.format("{0} {1}", Build.MANUFACTURER, Build.MODEL));
         deviceIp = findViewById(R.id.device_ip);
@@ -109,10 +111,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("SERVICE_STARTED");
+        intentFilter.addAction("SERVICE_STOPPED");
+        registerReceiver(broadcastReceiver, intentFilter, RECEIVER_EXPORTED);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         unbindService(serviceConnection);
-        serviceBound = false;
+        setServiceBound(false);
     }
 
     @Override
