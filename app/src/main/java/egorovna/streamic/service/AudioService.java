@@ -4,6 +4,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
@@ -16,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
 import egorovna.streamic.R;
+import egorovna.streamic.activity.MainActivity;
 import egorovna.streamic.server.AudioServer;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +50,8 @@ public class AudioService extends Service {
                 .setContentTitle("Active Server")
                 .setSmallIcon(R.drawable.mic)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                .setContentIntent(PendingIntent.getActivity(this, 0,
+                        new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE))
                 .build();
         int type = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
