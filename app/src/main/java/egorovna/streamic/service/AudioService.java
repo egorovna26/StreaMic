@@ -46,6 +46,7 @@ public class AudioService extends Service {
         audioServer.startServer();
         Notification notification = new NotificationCompat.Builder(this, getString(R.string.notification_channel_name))
                 .setContentTitle("Active Server")
+                .setSmallIcon(R.drawable.mic)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                 .build();
         int type = 0;
