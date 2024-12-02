@@ -1,10 +1,13 @@
 package egorovna.streamic.activity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -17,8 +20,9 @@ import egorovna.streamic.R;
 public class MainActivity extends AppCompatActivity {
     private CardView postNotificationsCard;
     private CardView recordAudioCard;
-    private Button allowPostNotifications;
-    private Button allowRecordAudio;
+    private CardView serviceStart;
+    private CardView serviceStatus;
+    private Button serviceStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +31,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         postNotificationsCard = findViewById(R.id.post_notifications_card);
         recordAudioCard = findViewById(R.id.record_audio_card);
-        allowPostNotifications = findViewById(R.id.allow_post_notifications);
-        allowRecordAudio = findViewById(R.id.allow_record_audio);
+        Button allowPostNotifications = findViewById(R.id.allow_post_notifications);
+        Button allowRecordAudio = findViewById(R.id.allow_record_audio);
         checkPermissions();
         allowPostNotifications.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                requestPermissions(new String[]{POST_NOTIFICATIONS}, 1);
             }
         });
         allowRecordAudio.setOnClickListener(v ->
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1));
+                requestPermissions(new String[]{RECORD_AUDIO}, 1));
+        serviceStart = findViewById(R.id.service_start);
+        serviceStatus = findViewById(R.id.service_status);
+        serviceStop = findViewById(R.id.service_stop);
     }
 
     @Override
@@ -46,15 +53,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
-        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            postNotificationsCard.setVisibility(View.GONE);
+        boolean postNotifications = checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED;
+        boolean recordAudio = checkSelfPermission(RECORD_AUDIO) == PERMISSION_GRANTED;
+        if (postNotifications) {
+            postNotificationsCard.setVisibility(GONE);
         } else {
-            postNotificationsCard.setVisibility(View.VISIBLE);
+            postNotificationsCard.setVisibility(VISIBLE);
         }
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            recordAudioCard.setVisibility(View.GONE);
+        if (recordAudio) {
+            recordAudioCard.setVisibility(GONE);
         } else {
-            recordAudioCard.setVisibility(View.VISIBLE);
+            recordAudioCard.setVisibility(VISIBLE);
+        }
+        if (postNotifications && recordAudio) {
+            serviceStart.setVisibility(VISIBLE);
+            serviceStatus.setVisibility(VISIBLE);
+        } else {
+            serviceStart.setVisibility(GONE);
+            serviceStatus.setVisibility(GONE);
         }
     }
 }

@@ -6,4 +6,7 @@
     <string name="record_audio_title">Record Audio</string>
     <string name="record_audio_description">Allows an application to record audio</string>
     <string name="allow_permission">Allow Permission</string>
+    <string name="microphone_title">Microphone</string>
+    <string name="microphone_description">Stream your mic to another device</string>
+    <string name="stop_service">Stop</string>
 </resources>
