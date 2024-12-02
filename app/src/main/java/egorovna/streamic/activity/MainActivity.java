@@ -6,9 +6,13 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.icu.text.MessageFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +29,13 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 import egorovna.streamic.R;
+import egorovna.streamic.service.AudioService;
 
 public class MainActivity extends AppCompatActivity {
+    private ServiceConnection serviceConnection;
+    private AudioService audioService;
+    private boolean serviceBound = false;
+
     private CardView postNotificationsCard;
     private CardView recordAudioCard;
     private CardView serviceStart;
@@ -41,6 +50,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                AudioService.LocalBinder localBinder = (AudioService.LocalBinder) service;
+                audioService = localBinder.getService();
+                serviceBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                serviceBound = false;
+            }
+        };
         postNotificationsCard = findViewById(R.id.post_notifications_card);
         recordAudioCard = findViewById(R.id.record_audio_card);
         Button allowPostNotifications = findViewById(R.id.allow_post_notifications);
@@ -74,6 +96,26 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, AudioService.class);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(serviceConnection);
+        serviceBound = false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        checkPermissions();
+    }
+
     private String ip() {
         StringBuilder builder = new StringBuilder();
         try {
@@ -98,12 +140,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e(null, null, e);
         }
         return builder.toString().trim();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        checkPermissions();
     }
 
     private void checkPermissions() {
