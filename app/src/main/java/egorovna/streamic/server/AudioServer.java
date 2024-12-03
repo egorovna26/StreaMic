@@ -1,9 +1,6 @@
 package egorovna.streamic.server;
 
-import android.annotation.SuppressLint;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.util.Log;
 
 import org.java_websocket.WebSocket;
@@ -18,27 +15,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AudioServer implements Runnable {
-    private static final int SAMPLE_RATE = 44100;
-    private static final int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
-    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO;
-    private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static final int MIN_BUFFER_SIZE = AudioRecord.getMinBufferSize(
-            SAMPLE_RATE,
-            CHANNEL_CONFIG,
-            AUDIO_FORMAT
-    );
-
     private boolean working = false;
     private WebSocketServer webSocketServer;
     private AudioRecord audioRecord;
+    private byte[] buffer;
 
-    @SuppressLint("MissingPermission")
     @Override
     public void run() {
-        audioRecord = new AudioRecord(AUDIO_SOURCE, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, MIN_BUFFER_SIZE);
-        if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
-            return;
-        }
         audioRecord.startRecording();
         webSocketServer = new WebSocketServer(new InetSocketAddress(8888)) {
             @Override
@@ -68,7 +51,6 @@ public class AudioServer implements Runnable {
         };
         webSocketServer.setReuseAddr(true);
         webSocketServer.start();
-        byte[] buffer = new byte[MIN_BUFFER_SIZE];
         setWorking(true);
         while (working) {
             audioRecord.read(buffer, 0, buffer.length);

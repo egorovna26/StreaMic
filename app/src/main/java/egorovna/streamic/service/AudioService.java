@@ -8,6 +8,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -25,6 +28,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AudioService extends Service {
+    private static final int SAMPLE_RATE = 44100;
+    private static final int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
+    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO;
+    private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int MIN_BUFFER_SIZE = AudioRecord.getMinBufferSize(
+            SAMPLE_RATE,
+            CHANNEL_CONFIG,
+            AUDIO_FORMAT
+    );
+
     private final LocalBinder localBinder = new LocalBinder();
     private final AudioServer audioServer = new AudioServer();
 
@@ -45,6 +58,12 @@ public class AudioService extends Service {
         if (!recordAudio) {
             stopService();
         }
+        AudioRecord audioRecord = new AudioRecord(AUDIO_SOURCE, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, MIN_BUFFER_SIZE);
+        if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+            stopService();
+        }
+        audioServer.setAudioRecord(audioRecord);
+        audioServer.setBuffer(new byte[MIN_BUFFER_SIZE]);
         audioServer.startServer();
         Notification notification = new NotificationCompat.Builder(this, getString(R.string.notification_channel_name))
                 .setContentTitle("Active Server")
